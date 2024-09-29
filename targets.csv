@@ -1,0 +1,3 @@
+fqbn;version;config
+rp2040:rp2040:rpipico2;latest;FLASH=4194304_2097152
+espressif:esp32:esp32;latest;PSRAM=disabled\nPARTITION_SCHEME=default
