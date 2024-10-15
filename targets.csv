@@ -1,3 +1,10 @@
 fqbn;version;config
-rp2040:rp2040:rpipico2;latest;FLASH=4194304_2097152
+STMicroelectronics:stm32:GenH7;2.5.0;PNUM=DAISY_SEED
+Seeeduino:samd:seeed_XIAO_m0;1.8.2;
+esp8266:esp8266:d1_mini;latest;
+espressif:esp32:d1_mini32;latest;PSRAM=disabled\nPARTITION_SCHEME=no_ota
 espressif:esp32:esp32;latest;PSRAM=disabled\nPARTITION_SCHEME=default
+rp2040:rp2040:generic;latest;USBSTACK=tinyusb\nFLASH=8388608_4194304\nLITTLE_FS_BASE_ADDR=272625664\nLITTLE_FS_DATA_SIZE=4194304\nBOOT2=boot2_w25q64jv_4_padded_checksum
+rp2040:rp2040:rpipico2;latest;FLASH=4194304_2097152
+rp2040:rp2040:rpipico;latest;USBSTACK=tinyusb\nFLASH=2097152_1048576
+teensy:avr:teensy41;1.8.5;TEENSY_USB=serialmidiaudio
