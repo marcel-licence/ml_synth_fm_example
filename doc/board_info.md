@@ -7,8 +7,8 @@ Below you will find a list of build which can be configured and should compile w
 <b>Version:</b> 4.0.1<br />
 <b>Board:</b> Raspberry Pi Pico 2<br />
 <br />
-<b>Program storage space:</b> 117652 bytes<br />
-<b>Dynamic memory:</b> 20316 bytes<br />
+<b>Program storage space:</b> 117628 bytes<br />
+<b>Dynamic memory:</b> 20320 bytes<br />
 <br />
 <b>Flash Size:</b> 4MB (Sketch: 2MB, FS: 2MB)<br />
 <b>CPU Speed:</b> 150 MHz<br />
@@ -39,6 +39,13 @@ Below you will find a list of build which can be configured and should compile w
         <td>False</td>
     </tr>
     <tr>
+        <td>ML SynthTools Libraries</td>
+        <td>0.0.1</td>
+        <td>https://github.com/marcel-licence/ML_SynthTools_Lib</td>
+        <td>https://github.com/marcel-licence/ML_SynthTools_Lib.git</td>
+        <td>False</td>
+    </tr>
+    <tr>
         <td>LittleFS</td>
         <td>0.1.0</td>
         <td>https://github.com/earlephilhower/arduino-pico</td>
@@ -50,8 +57,8 @@ Below you will find a list of build which can be configured and should compile w
 <b>Version:</b> 2.0.13<br />
 <b>Board:</b> ESP32 Dev Module<br />
 <br />
-<b>Program storage space:</b> 796737 bytes<br />
-<b>Dynamic memory:</b> 57628 bytes<br />
+<b>Program storage space:</b> 796777 bytes<br />
+<b>Dynamic memory:</b> 57636 bytes<br />
 <br />
 <b>JTAG Adapter:</b> Disabled<br />
 <b>PSRAM:</b> Disabled<br />
@@ -83,6 +90,20 @@ Below you will find a list of build which can be configured and should compile w
         <td>False</td>
     </tr>
     <tr>
+        <td>ML SynthTools Libraries</td>
+        <td>0.0.1</td>
+        <td>https://github.com/marcel-licence/ML_SynthTools_Lib</td>
+        <td>https://github.com/marcel-licence/ML_SynthTools_Lib.git</td>
+        <td>False</td>
+    </tr>
+    <tr>
+        <td>Wire</td>
+        <td>2.0.0</td>
+        <td>http://arduino.cc/en/Reference/Wire</td>
+        <td>https://github.com/espressif/arduino-esp32.git</td>
+        <td>True</td>
+    </tr>
+    <tr>
         <td>WiFi</td>
         <td>2.0.0</td>
         <td></td>
@@ -107,13 +128,6 @@ Below you will find a list of build which can be configured and should compile w
         <td>SD_MMC</td>
         <td>2.0.0</td>
         <td></td>
-        <td>https://github.com/espressif/arduino-esp32.git</td>
-        <td>True</td>
-    </tr>
-    <tr>
-        <td>Wire</td>
-        <td>2.0.0</td>
-        <td>http://arduino.cc/en/Reference/Wire</td>
         <td>https://github.com/espressif/arduino-esp32.git</td>
         <td>True</td>
     </tr>
