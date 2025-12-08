@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Headless FM Synth Control</title>
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --panel-color: #2a2a2a;
+            --text-color: #f0f0f0;
+            --accent-color: #00ffcc;
+            --op1-color: #ff6b6b;
+            --op2-color: #4ecdc4;
+            --op3-color: #ffe66d;
+            --op4-color: #1a535c;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 { margin-bottom: 20px; text-shadow: 0 0 10px var(--accent-color); }
+        .control-panel {
+            background-color: var(--panel-color);
+            border-radius: 10px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 900px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .section {
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 15px;
+            background: #222;
+        }
+        .section h3 {
+            margin-top: 0;
+            color: var(--accent-color);
+            border-bottom: 1px solid #444;
+            padding-bottom: 5px;
+        }
+        .control-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        label { margin-bottom: 5px; font-size: 0.9em; display: flex; justify-content: space-between;}
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            margin-top: -8px;
+            box-shadow: 0 0 5px var(--accent-color);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #555;
+            border-radius: 2px;
+        }
+        .btn {
+            background-color: #333;
+            color: var(--accent-color);
+            border: 2px solid var(--accent-color);
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background-color: var(--accent-color);
+            color: #000;
+            box-shadow: 0 0 15px var(--accent-color);
+        }
+        .op-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            justify-content: center;
+        }
+        .op-btn {
+            flex: 1;
+            padding: 10px;
+            background: #333;
+            border: 1px solid #555;
+            color: #888;
+            cursor: pointer;
+            text-align: center;
+            border-radius: 4px;
+        }
+        .op-btn.active {
+            color: #fff;
+            border-color: var(--accent-color);
+            background: #444;
+            box-shadow: 0 0 10px rgba(0,255,204,0.2);
+        }
+        .header-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        select {
+            padding: 10px;
+            background: #333;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 5px;
+        }
+        .status {
+            margin-top: 10px;
+            font-size: 0.8em;
+            color: #888;
+        }
+        .val-display { color: #aaa; }
+    </style>
+</head>
+<body>
+
+    <h1>Headless FM Synth</h1>
+
+    <div class="header-controls">
+        <button id="connectBtn" class="btn">Connect BLE MIDI</button>
+        <select id="presetSelect">
+            <option value="">-- Load Preset --</option>
+            <option value="init">Init Patch</option>
+            <option value="bass">FM Bass</option>
+            <option value="bell">Glass Bell</option>
+        </select>
+    </div>
+
+    <div class="status" id="statusText">Not Connected</div>
+
+    <div class="control-panel">
+
+        <!-- Global FM Controls -->
+        <div class="section">
+            <h3>Global FM</h3>
+            <div class="control-group">
+                <label>Algorithm (0-7) <span id="val-105" class="val-display">0</span></label>
+                <input type="range" id="cc-105" min="0" max="127" value="0" step="16" oninput="updateCC(105, this.value)">
+            </div>
+            <div class="control-group">
+                <label>Feedback <span id="val-104" class="val-display">0</span></label>
+                <input type="range" id="cc-104" min="0" max="127" value="0" oninput="updateCC(104, this.value)">
+            </div>
+        </div>
+
+        <!-- Moog Filter -->
+        <div class="section">
+            <h3>Moog Filter</h3>
+            <div class="control-group">
+                <label>Cutoff <span id="val-74" class="val-display">64</span></label>
+                <input type="range" id="cc-74" min="0" max="127" value="64" oninput="updateCC(74, this.value)">
+            </div>
+            <div class="control-group">
+                <label>Resonance <span id="val-71" class="val-display">10</span></label>
+                <input type="range" id="cc-71" min="0" max="127" value="10" oninput="updateCC(71, this.value)">
+            </div>
+        </div>
+
+        <!-- Operator Section -->
+        <div class="section" style="grid-column: 1 / -1;">
+            <h3>Operator Control</h3>
+
+            <div class="op-selector">
+                <div class="op-btn active" id="btn-op1" onclick="selectOp(1)">Op 1</div>
+                <div class="op-btn" id="btn-op2" onclick="selectOp(2)">Op 2</div>
+                <div class="op-btn" id="btn-op3" onclick="selectOp(3)">Op 3</div>
+                <div class="op-btn" id="btn-op4" onclick="selectOp(4)">Op 4</div>
+            </div>
+            <p style="font-size: 0.8em; color: #888; text-align: center;">Select an Operator to edit its Envelope and Ratio</p>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <!-- Op Envelope -->
+                <div>
+                    <h4>Envelope</h4>
+                    <div class="control-group">
+                        <label>Attack <span id="val-73" class="val-display">10</span></label>
+                        <input type="range" id="cc-73" min="0" max="127" value="10" oninput="updateCC(73, this.value)">
+                    </div>
+                    <div class="control-group">
+                        <label>Decay 1 <span id="val-75" class="val-display">40</span></label>
+                        <input type="range" id="cc-75" min="0" max="127" value="40" oninput="updateCC(75, this.value)">
+                    </div>
+                    <div class="control-group">
+                        <label>Decay 2 <span id="val-76" class="val-display">0</span></label>
+                        <input type="range" id="cc-76" min="0" max="127" value="0" oninput="updateCC(76, this.value)">
+                    </div>
+                    <div class="control-group">
+                        <label>Sustain Lvl <span id="val-79" class="val-display">127</span></label>
+                        <input type="range" id="cc-79" min="0" max="127" value="127" oninput="updateCC(79, this.value)">
+                    </div>
+                    <div class="control-group">
+                        <label>Release <span id="val-72" class="val-display">20</span></label>
+                        <input type="range" id="cc-72" min="0" max="127" value="20" oninput="updateCC(72, this.value)">
+                    </div>
+                </div>
+
+                <!-- Op Tuning -->
+                <div>
+                    <h4>Tuning</h4>
+                    <div class="control-group">
+                        <label>Ratio / Mult <span id="val-77" class="val-display">64</span></label>
+                        <input type="range" id="cc-77" min="0" max="127" value="64" oninput="updateCC(77, this.value)">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Virtual Keyboard -->
+        <div class="section" style="grid-column: 1 / -1;">
+            <h3>Test Notes</h3>
+            <div style="display: flex; gap: 5px; justify-content: center;">
+                <button class="btn" onmousedown="sendNoteOn(48)" onmouseup="sendNoteOff(48)">C3</button>
+                <button class="btn" onmousedown="sendNoteOn(50)" onmouseup="sendNoteOff(50)">D3</button>
+                <button class="btn" onmousedown="sendNoteOn(52)" onmouseup="sendNoteOff(52)">E3</button>
+                <button class="btn" onmousedown="sendNoteOn(53)" onmouseup="sendNoteOff(53)">F3</button>
+                <button class="btn" onmousedown="sendNoteOn(55)" onmouseup="sendNoteOff(55)">G3</button>
+                <button class="btn" onmousedown="sendNoteOn(57)" onmouseup="sendNoteOff(57)">A3</button>
+                <button class="btn" onmousedown="sendNoteOn(59)" onmouseup="sendNoteOff(59)">B3</button>
+                <button class="btn" onmousedown="sendNoteOn(60)" onmouseup="sendNoteOff(60)">C4</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const MIDI_SERVICE_UUID = '03b80e5a-ede8-4b33-a751-6ce34ec4c700';
+        const MIDI_CHAR_UUID    = '7772e5db-3868-4112-a1a9-f2669d106bf3';
+
+        let midiCharacteristic = null;
+        let device = null;
+        let currentOp = 1;
+
+        // Simple Presets (Just global settings for now, Op settings would require complex multi-message dumps)
+        const presets = {
+            init: { 105: 0, 104: 0, 74: 127, 71: 0 },
+            bass: { 105: 32, 104: 80, 74: 50, 71: 30 },
+            bell: { 105: 80, 104: 20, 74: 100, 71: 10 }
+        };
+
+        document.getElementById('connectBtn').addEventListener('click', connectBLE);
+        document.getElementById('presetSelect').addEventListener('change', (e) => loadPreset(e.target.value));
+
+        function selectOp(op) {
+            currentOp = op;
+            // Visual Update
+            document.querySelectorAll('.op-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-op' + op).classList.add('active');
+
+            // Send MIDI CC 102 to select Op
+            // Map 1->0, 2->32, 3->64, 4->96 (approx)
+            let val = (op - 1) * 32;
+            sendMidiMessage(0xB0, 102, val);
+
+            // Note: In a real app we would want to request the current values of this Op from the device
+            // or store state in JS. For now, the sliders will just jump to their current position when moved.
+        }
+
+        async function connectBLE() {
+            try {
+                device = await navigator.bluetooth.requestDevice({
+                    filters: [{ services: [MIDI_SERVICE_UUID] }]
+                });
+
+                document.getElementById('statusText').innerText = 'Connecting to ' + device.name + '...';
+
+                device.addEventListener('gattserverdisconnected', onDisconnected);
+
+                const server = await device.gatt.connect();
+                const service = await server.getPrimaryService(MIDI_SERVICE_UUID);
+                midiCharacteristic = await service.getCharacteristic(MIDI_CHAR_UUID);
+
+                document.getElementById('statusText').innerText = 'Connected';
+                document.getElementById('connectBtn').innerText = 'Disconnect';
+                document.getElementById('connectBtn').onclick = disconnectBLE;
+
+                // Select Op 1 by default
+                selectOp(1);
+
+            } catch (error) {
+                console.error(error);
+                document.getElementById('statusText').innerText = 'Connection Failed: ' + error;
+            }
+        }
+
+        function disconnectBLE() {
+            if (device && device.gatt.connected) {
+                device.gatt.disconnect();
+            }
+        }
+
+        function onDisconnected() {
+            document.getElementById('statusText').innerText = 'Disconnected';
+            document.getElementById('connectBtn').innerText = 'Connect BLE MIDI';
+            document.getElementById('connectBtn').onclick = connectBLE;
+            midiCharacteristic = null;
+        }
+
+        function sendMidiMessage(status, data1, data2) {
+            if (!midiCharacteristic) return;
+            const packet = new Uint8Array([0x80, 0x80, status, data1, data2]);
+            midiCharacteristic.writeValue(packet).catch(err => console.error(err));
+        }
+
+        function updateCC(cc, value) {
+            document.getElementById('val-' + cc).innerText = value;
+            sendMidiMessage(0xB0, cc, parseInt(value));
+        }
+
+        function sendNoteOn(note) {
+            sendMidiMessage(0x90, note, 100);
+        }
+
+        function sendNoteOff(note) {
+            sendMidiMessage(0x80, note, 0);
+        }
+
+        function loadPreset(name) {
+            if (!presets[name]) return;
+            const p = presets[name];
+            for (const cc in p) {
+                const val = p[cc];
+                const slider = document.getElementById('cc-' + cc);
+                if (slider) {
+                    slider.value = val;
+                    document.getElementById('val-' + cc).innerText = val;
+                }
+                sendMidiMessage(0xB0, parseInt(cc), val);
+            }
+        }
+    </script>
+</body>
+</html>
