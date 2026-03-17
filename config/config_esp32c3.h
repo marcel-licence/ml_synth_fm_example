@@ -36,7 +36,7 @@
  */
 
 
-#if (defined ARDUINO_ESP32C3_DEV)
+#if (defined ARDUINO_ESP32C3_DEV) || (defined ARDUINO_XIAO_ESP32C3) 
 
 
 #define I2S_BCLK_PIN -1
@@ -45,4 +45,4 @@
 #define I2S_DIRECT_OUT
 
 
-#endif /* (defined ARDUINO_ESP32C3_DEV) */
+#endif /* (defined ARDUINO_ESP32C3_DEV) || (defined ARDUINO_XIAO_ESP32C3) */
