@@ -35,7 +35,7 @@
  * @brief Configuration for ESP32
  */
 
-#if (defined ESP32) && (!defined ARDUINO_LOLIN_S2_MINI) && (!defined ARDUINO_ESP32S2_DEV) && (!defined ARDUINO_ESP32C3_DEV) && (!defined ARDUINO_SEEED_XIAO_M0)
+#if (defined ESP32) && (!defined ARDUINO_LOLIN_S2_MINI) && (!defined ARDUINO_ESP32S2_DEV) && (!defined ARDUINO_ESP32C3_DEV) && (!defined ARDUINO_SEEED_XIAO_M0) && (!defined ARDUINO_XIAO_ESP32C3) 
 
 //#define BOARD_ML_V1 /* activate this when using the ML PCB V1 */
 #define BOARD_ML_SYNTH_V2 /* activate this when using the ML PCB V2 */
