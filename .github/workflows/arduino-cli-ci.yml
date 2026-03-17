@@ -223,6 +223,19 @@ jobs:
             fs_family: ""
             manual_only: true
 
+        exclude:
+          - board:
+              name: "Generic ESP8266 Module"
+
+          - board:
+              name: "LOLIN(WEMOS) D1 R2 & mini"
+
+          - board:
+              name: "Seeeduino XIAO (SAMD21)"
+
+          - board:
+              name: "Generic STM32F4 Series - BlackPill F411CE"
+
 
     steps:
     - uses: actions/checkout@v4
