@@ -95,6 +95,7 @@
 #include "config/config_daisy_seed.h"
 #include "config/config_disco_f407vg.h"
 #include "config/config_esp32.h"
+#include "config/config_esp32c3.h"
 #include "config/config_esp32s2.h"
 #include "config/config_esp8266.h"
 #include "config/config_generic_f407vgtx.h"
