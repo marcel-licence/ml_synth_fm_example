@@ -47,6 +47,16 @@
 #endif
 
 
+#include "app.h"
+
+
+/* requires the ML_SynthTools library: https://github.com/marcel-licence/ML_SynthTools */
+#include <ml_fm.h>
+#include <ml_arp.h>
+#include <ml_delay.h>
+#include <ml_reverb.h>
+
+
 /*
  * this mapping is used for the edirol pcr-800
  * this should be changed when using another controller
